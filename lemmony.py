@@ -1,9 +1,9 @@
 import requests
 
 # enter your local instance, username and password here (probably use a bot account?)
-local_instance = 'lemmy.management'
-username = 'fed_sub_bot'
-password = 'bVtwxF92QDeeZK'
+local_instance = 'your.instance.com'
+username = 'bot_user'
+password = 'bot_password'
 
 # get global communities from feddit.de and store in list
 print('fetching global communities from feddit.de...')
