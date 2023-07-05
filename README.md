@@ -37,6 +37,14 @@ or
 - [user] - the user account (login.)
 - [password] - password for [user]
 
+#### Options
+
+Pass these flags to the command for more control:
+
+- `-n` : skip subscribing to communities in the "Pending" state for the user
+- `-s` : subscribe only. skips the discovery and adding of new lemmyverse communtities
+- `-d` :  discover only. skips subscribing to any communities for the user
+
 ### Build and Run Manually
 
 Requires python3, and pip(3)
