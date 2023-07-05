@@ -2,6 +2,10 @@ FROM python:3.11.4-slim-bookworm
 
 ENV PYTHONUNBUFFERED=1
 
+LABEL org.opencontainers.image.source=https://github.com/jheidecker/lemmony
+LABEL org.opencontainers.image.description="Lemmony"
+LABEL org.opencontainers.image.licenses=MIT
+
 WORKDIR /app
 RUN pip3 install build
 COPY . .
