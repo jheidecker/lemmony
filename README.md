@@ -16,23 +16,26 @@ This will probably fail if the instance does not have a valid SSL certificate.
 ### Docker / Podman
 
 ```
-sudo docker run ghcr.io/jheidecker/lemmony/lemmony lemmony-cli -l [your-instance] -u [username] -p [password] 
-podman run ghcr.io/jheidecker/lemmony/lemmony lemmony-cli -l [your-instance] -u [username] -p [password] 
+# sudo docker run ghcr.io/jheidecker/lemmony/lemmony lemmony-cli -l [your-instance] -u [username] -p [password]
+```
+or
+```
+# podman run ghcr.io/jheidecker/lemmony/lemmony lemmony-cli -l [your-instance] -u [username] -p [password] 
 ```
 - [your instance] - the domain of the local instance i.e. lemmyrules.com. This is the same address (minus the https://) you use to access your lemmy instance. Depending on your setup, it might `host.domain.name` or just `domain.name`.
 - [user] - the user account (login.)
 - [password] - password for [user]
 
-### Manual
+### Build and Run Manually
 
 Requires python3, and pip
 
 ```
-git clone https://github.com/jheidecker/lemmony.git
-cd lemmony
-pip install build
-python -m build
-pip install dist/lemmony-0.0.1-py3-none-any.whl
+# git clone https://github.com/jheidecker/lemmony.git
+# cd lemmony
+# pip install build
+# python -m build
+# pip install dist/lemmony-0.0.1-py3-none-any.whl
 ```
 
 This should install lemmony-cli as a command in your path:
@@ -67,3 +70,21 @@ This will cause load and subsequent incoming network activity on your instance. 
 
 ## Development
 
+Python 3.11.4, pip(3) and venv:
+
+```
+# git clone https://github.com/jheidecker/lemmony.git
+# cd lemmony
+```
+- develop
+- update `Containerfile` and `setup.cfg`
+```
+# podman build . -t ghcr.io/jheidecker/lemmony/lemmony:version --platform linux/amd64,linux/arm64
+# podman build . -t ghcr.io/jheidecker/lemmony/lemmony:latest --platform linux/amd64,linux/arm64
+```
+Requires access to ghcr package:
+```
+# podman push ghcr.io/jheidecker/lemmony/lemmony:version
+# podman push ghcr.io/jheidecker/lemmony/lemmony:latest
+```
+- test
