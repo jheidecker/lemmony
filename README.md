@@ -3,9 +3,20 @@
 
 Lemmy by default, will only collect new content from federated servers when a user looks for it and/or subscribes to that remote content.
 
-This script should help lemmy self-hosters with few or one user, who want to browse All.
+This script should help lemmy self-hosters with few or one user, who want to browse "All."
 
-The script gets all of the publicly federated communities and "adds" them to your local instance. All should be populated with activity from around the lemmyverse.
+The script gets all of the publicly federated communities and "makes them known" to your local instance and then subscribes to them. "All" should be populated with activity from around the lemmyverse.
+
+Per: https://join-lemmy.org/docs/users/01-getting-started.html
+
+> These previous ways will only show communities that are already known to the instance. Especially if you joined a small or inactive Lemmy instance, there will be few communities to discover. You can find more communities by browsing different Lemmy instances, or using the Lemmy Community Browser. When you found a community that you want to follow, enter its URL (e.g. https://feddit.de/c/main) or the identifier (e.g. !main@feddit.de) into the search field of your own Lemmy instance. Lemmy will then fetch the community from its original instance, and allow you to interact with it. The same method also works to fetch users, posts or comments from other instances.
+
+## What it does
+
+1. Get a list of all communities/magazines in the lemmyverse that have > 0 posts
+2. Logs in to local instance
+2. "Makes known" (see above) any communities or magazines fetched above that have never been known on your local instance
+3. Subscribes a user (follows) to all known communities on your local instance that are "Unsubscribed" or, re-subscribes if "Pending."
 
 ## Usage
 
@@ -79,6 +90,8 @@ Python 3.11.4, pip(3) and venv:
 - develop
 - update `Containerfile` and `setup.cfg`
 ```
+# export CR_PAT=secret_pat
+# echo $CR_PAT | podman login ghcr.io -u secret_username --password-stdin
 # podman build . -t ghcr.io/jheidecker/lemmony/lemmony:version --platform linux/amd64,linux/arm64
 # podman build . -t ghcr.io/jheidecker/lemmony/lemmony:latest --platform linux/amd64,linux/arm64
 ```
