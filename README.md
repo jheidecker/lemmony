@@ -3,9 +3,9 @@
 
 Lemmy by default, will only collect new content from federated servers when a user looks for it and/or subscribes to that remote content.
 
-This script should help lemmy self-hosters with few or one user, who want to browse "All."
+This script uses the Lemmy API, Python and Docker tos help lemmy self-hosters with few (or just one) user who want to browse an "All," with the most complete picture of the federated Lemmyverse!
 
-The script gets all of the publicly federated communities and "makes them known" to your local instance and then subscribes to them. "All" should be populated with activity from around the lemmyverse.
+The script gets all of the publicly federated communities and "makes them known" to your local instance and then subscribes to them. "All" should be populated with activity from around the Lemmyverse.
 
 Per: https://join-lemmy.org/docs/users/01-getting-started.html
 
@@ -13,14 +13,14 @@ Per: https://join-lemmy.org/docs/users/01-getting-started.html
 
 ## What it does
 
-1. Get a list of all communities/magazines in the lemmyverse that have > 0 posts
-2. Logs in to local instance
+1. Get a list of all communities/magazines in the Lemmyverse that have > 0 posts
+2. Login to local instance as a specified user
 2. "Makes known" (see above) any communities or magazines fetched above that have never been known on your local instance
-3. Subscribes a user (follows) to all known communities on your local instance that are "Unsubscribed" or, re-subscribes if "Pending."
+3. Subscribes a user (follows) to all known communities on your local instance that are shown as "Unsubscribed" or, re-subscribes if the status is "Pending."
 
 ## Usage
 
-The script requires an account to login to the instance. It is reccomended you create a "bot" user that is not used for interactive logins.
+The script requires an account to login to the instance. It is recommended you create a "bot" user that is not used for interactive logins.
 
 This will probably fail if the instance does not have a valid SSL certificate.
 
@@ -39,7 +39,7 @@ or
 
 ### Build and Run Manually
 
-Requires python3, and pip
+Requires python3, and pip(3)
 
 ```
 # git clone https://github.com/jheidecker/lemmony.git
