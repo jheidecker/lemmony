@@ -24,6 +24,10 @@ This will cause load and subsequent incoming network activity on your instance a
 3. "Makes known" (see above) any communities or magazines fetched above that have never been known on your local instance
 4. Subscribes a user (follows) to all known communities on your local instance that are shown as "Unsubscribed" or, re-subscribes if the status is "Pending."
 
+## Compatibility
+
+Lemmy's API versioning is... not ideally stable. Check the release notes for the version of Lemmy the release was tested against. It SHOULD work with newer versions, but no guarantees it will work with older versions.
+
 ## Usage
 
 The script requires an account to login to the instance. It is recommended you create a "bot" user that is not used for interactive logins.
