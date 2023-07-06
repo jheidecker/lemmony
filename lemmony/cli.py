@@ -60,7 +60,6 @@ def main():
             for community in communities.json():
                 if community['counts']['posts'] > 0 and not community['baseurl'] in exclude_instances and (include_instances == [] or community['baseurl'] in include_instances):
                     community_actors.append(community['url'].lower())
-                    #print('lv: ' + community['url'].lower())
             communities_pages -= 1
         community_count = str(len(community_actors))
         print('got ' + community_count + ' non-empty lemmy communities.')
@@ -81,7 +80,7 @@ def main():
         all_actor_count = str(len(all_actors))
 
         # get local communities and store id (number) and actor_id (url) in lists
-        print('enumerating all local communities (this might take a while)...')
+        print('enumerating all locally (known) communities (this might take a while)...')
         local_community_id_list = []
         local_community_actor_id_list = []
         new_results = True
@@ -92,18 +91,23 @@ def main():
                 for community in actor_resp.json()['communities']:
                     local_community_id_list.append(community['community']['id'])
                     local_community_actor_id_list.append(community['community']['actor_id'].lower())
+                print(page * 50, end="\r")
                 page += 1
             else:
                 new_results = False
+        print('done.')
 
         # add remote communities to local communities via. search requests only if they don't already exist
         print('adding new global communities > local instance (this will take a while)...')
         for idx, actor_id in enumerate(all_actors, 1):
             if actor_id not in local_community_actor_id_list:
                 actor_resp = curSession.get('https://'+local_instance+'/search?q=' + actor_id + '&type=All&listingType=All&page=1&sort=TopAll', headers={"Cookie": "jwt=" + auth_token})
-                print(str(idx) + "/" + all_actor_count + " " + actor_id + ": " + str(actor_resp.status_code))
+                print('\r\033[K', end='')
+                print(str(idx) + "/" + all_actor_count + " " + actor_id + ": " + str(actor_resp.status_code), end='\r')
             else:
-                print(str(idx) + "/" + all_actor_count + " " + actor_id + ": already exists")
+                pass
+        print('\r\033[K', end='')
+        print('done.')
 
     def subscribe():
         # fetch a list of communities by id that the user is not already subscribed to
@@ -124,9 +128,11 @@ def main():
                     else:
                         local_community_id_list.append(community['community']['id'])
                         #print("f:non-subscribed:added " + community['community']['actor_id'])
+                print(page * 50, end="\r")
                 page += 1
             else:
                 new_results = False
+        print('done.')
 
         # store and display total in the list for displaying progress
         local_community_count = str(len(local_community_id_list))
@@ -136,7 +142,10 @@ def main():
         print('subscribing ' + username + ' to communities (this will take a while)...')
         for idx, community_id in enumerate(local_community_id_list, 1):
             sub_resp = curSession.post('https://'+local_instance+'/api/v3/community/follow', data='{"community_id": ' + str(community_id) + ', "follow": true, "auth": "' + auth_token + '"}', headers={"Cookie": "jwt=" + auth_token, "Content-Type": "application/json"})
-            print(str(idx) + "/" + local_community_count + " " + str(community_id) + ": " + str(sub_resp.json()['community_view']['subscribed']))
+            print('\r\033[K', end='\r')
+            print(str(idx) + "/" + local_community_count + " " + str(community_id) + ": " + str(sub_resp.json()['community_view']['subscribed']), end="\r")
+        print('\r\033[K', end='\r')
+        print('done.')
 
     if discover_only == True:
         discover()
