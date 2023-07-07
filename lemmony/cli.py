@@ -16,6 +16,7 @@ def main():
     parser.add_argument('-d', '--discover-only', help='only add new communities to instance list, do not subscribe', action='store_true')
     parser.add_argument('-r', '--rate-limit', help='if specified, will rate limit requests to LOCAL to this many per second (default: 15)', type=int, default=15)
     parser.add_argument('-t', '--top-only', help='if specified, only discover top X communities based on active users per day (Lemmy only) (default: get all non-empty communities)', type=int)
+    parser.add_argument('-k', '--skip-kbin', help='if specified, will not discover kbin communities (will still subscribe if they are communities on instance)', action='store_true')
     args = parser.parse_args()
 
     # define local instance, username, password and include/exclude lists
@@ -25,6 +26,7 @@ def main():
     no_pending = args.no_pending
     subscribe_only = args.subscribe_only
     discover_only = args.discover_only
+    skip_kbin = args.skip_kbin
     
     if args.top_only is not None:
         top_only = args.top_only
@@ -60,7 +62,7 @@ def main():
     def discover():
             
         # get community and magazine numbers from lemmyverse.net for fetching pagination
-        print('fetching lemmy communities and kbin magazines from lemmyverse.net...')
+        print('fetching lemmy communities (and kbin magazines) from lemmyverse.net...')
         meta = requests.get('https://lemmyverse.net/data/meta.json')
         communities_total = meta.json()['communities']
         magazines_total = meta.json()['magazines']
@@ -102,18 +104,23 @@ def main():
             print('got ' + community_count + ' non-empty Lemmy communities.')
 
         # get magazines and add to magazine_actor list (lemmyverse api does not show post count, we get them all)
-        magazine_actors = []
-        while magazines_pages >= 0:
-            magazines = requests.get('https://lemmyverse.net/data/magazines/' + str(magazines_pages) + '.json')
-            for magazine in magazines.json():
-                if not magazine['baseurl'] in exclude_instances and (include_instances == [] or magazine['baseurl'] in include_instances):
-                    magazine_actors.append(magazine['actor_id'].lower())
-            magazines_pages -= 1
-        magazine_count = str(len(magazine_actors))
-        print('got ' + magazine_count + ' kbin magazines.')
+        if skip_kbin == False:
+            magazine_actors = []
+            while magazines_pages >= 0:
+                magazines = requests.get('https://lemmyverse.net/data/magazines/' + str(magazines_pages) + '.json')
+                for magazine in magazines.json():
+                    if not magazine['baseurl'] in exclude_instances and (include_instances == [] or magazine['baseurl'] in include_instances):
+                        magazine_actors.append(magazine['actor_id'].lower())
+                magazines_pages -= 1
+            magazine_count = str(len(magazine_actors))
+            print('got ' + magazine_count + ' kbin magazines.')
 
         # merge community and magazine actor lists to all_actor (url) list and count (for displaying progress)
-        all_actors = community_actors + magazine_actors
+        if skip_kbin == False:
+            all_actors = community_actors + magazine_actors
+        else:
+            all_actors = community_actors
+
         all_actor_count = str(len(all_actors))
 
         # get local communities and store id (number) and actor_id (url) in lists
