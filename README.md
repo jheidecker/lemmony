@@ -60,9 +60,9 @@ or
 Pass these flags to the command for more control:
 
 - `-n` : skip subscribing to communities in the "Pending" state for the user
-- `-s` : subscribe only. skips the discovery and adding of new lemmyverse communtities
+- `-s` : subscribe only. skips the discovery and adding of new lemmyverse communities
 - `-d` : discover only. skips subscribing to any communities for the user
-- `-r` : if specified, will rate limit requests to LOCAL to this many per second (default: 15)
+- `-r [number]` : if specified, will rate limit requests to LOCAL to this many per second (default: 15)
 
 ### Build and Run Manually
 
@@ -80,7 +80,9 @@ This should install lemmony-cli as a command in your path:
 
 ```bash
 # lemmony-cli
-usage: lemmony-cli [-h] [-i INCLUDE [INCLUDE ...]] [-e EXCLUDE [EXCLUDE ...]] -l LOCAL -u USERNAME -p PASSWORD
+usage: lemmony-cli [-h] [-i INCLUDE [INCLUDE ...]] [-e EXCLUDE [EXCLUDE ...]]
+                   -l LOCAL -u USERNAME -p PASSWORD [-n] [-s] [-d]
+                   [-r RATE_LIMIT]
 lemmony-cli: error: the following arguments are required: -l/--local, -u/--username, -p/--password
 ```
 
@@ -100,7 +102,7 @@ To add communities from ONLY `lemmy.world`:
 # lemmony-cli -l my.lemmy -u my_bot -p my_password -i lemmy.world
 ```
 
-You can specify multiple instances seperated by spaces. For example: `-i lemmy.world lemmy.ml beehaw.org`
+You can specify multiple instances separated by spaces. For example: `-i lemmy.world lemmy.ml beehaw.org`
 
 ## Development Notes (build/test/release)
 
