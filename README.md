@@ -63,6 +63,7 @@ Pass these flags to the command for more control:
 - `-s` : subscribe only. skips the discovery and adding of new lemmyverse communities
 - `-d` : discover only. skips subscribing to any communities for the user
 - `-r [number]` : if specified, will rate limit requests to LOCAL to this many per second (default: 15)
+- `-t [number]` : if specified, only discover top X communities based on active users per day (Lemmy only) (default: get all non-empty communities)
 
 ### Build and Run Manually
 
@@ -80,10 +81,9 @@ This should install lemmony-cli as a command in your path:
 
 ```bash
 # lemmony-cli
-usage: lemmony-cli [-h] [-i INCLUDE [INCLUDE ...]] [-e EXCLUDE [EXCLUDE ...]]
-                   -l LOCAL -u USERNAME -p PASSWORD [-n] [-s] [-d]
-                   [-r RATE_LIMIT]
-lemmony-cli: error: the following arguments are required: -l/--local, -u/--username, -p/--password
+usage: lemmony-cli [-h] [-i INCLUDE [INCLUDE ...]] [-e EXCLUDE [EXCLUDE ...]] -l LOCAL -u USERNAME -p PASSWORD [-n] [-s] [-d] [-r RATE_LIMIT]
+              [-t TOP_ONLY]
+cli.py: error: the following arguments are required: -l/--local, -u/--username, -p/--password
 ```
 
 ### Include and exclude instances

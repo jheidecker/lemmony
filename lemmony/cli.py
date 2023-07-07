@@ -1,6 +1,7 @@
 import requests
 import argparse
 import time
+from itertools import groupby
 
 def main():
     # parse arguments
@@ -14,6 +15,7 @@ def main():
     parser.add_argument('-s', '--subscribe-only', help='only subscribe to unsubscribed (-n) or unsubscribed/pending communities, do not scrape for and add new communities', action='store_true')
     parser.add_argument('-d', '--discover-only', help='only add new communities to instance list, do not subscribe', action='store_true')
     parser.add_argument('-r', '--rate-limit', help='if specified, will rate limit requests to LOCAL to this many per second (default: 15)', type=int, default=15)
+    parser.add_argument('-t', '--top-only', help='if specified, only discover top X communities based on active users per day (Lemmy only) (default: get all non-empty communities)', type=int)
     args = parser.parse_args()
 
     # define local instance, username, password and include/exclude lists
@@ -23,6 +25,11 @@ def main():
     no_pending = args.no_pending
     subscribe_only = args.subscribe_only
     discover_only = args.discover_only
+    
+    if args.top_only is not None:
+        top_only = args.top_only
+    else:
+        top_only = 0
 
     if args.include is not None:
         include_instances = args.include
@@ -63,14 +70,36 @@ def main():
 
         # get communities and add to community_actor list
         community_actors = []
-        while communities_pages >= 0:
-            communities = requests.get('https://lemmyverse.net/data/community/' + str(communities_pages) + '.json')
-            for community in communities.json():
-                if community['counts']['posts'] > 0 and not community['baseurl'] in exclude_instances and (include_instances == [] or community['baseurl'] in include_instances):
+
+        # sort by active users per day if top_only is specified
+        if top_only > 0:
+            with_baseurl = []
+            while communities_pages >= 0:
+                communities = requests.get('https://lemmyverse.net/data/community/' + str(communities_pages) + '.json')
+                for community in communities.json():
+                    if community['counts']['posts'] > 0 and not community['baseurl'] in exclude_instances and (include_instances == [] or community['baseurl'] in include_instances):
+                        tmp_dict = {'baseurl': community['baseurl'], 'users_active_day': community['counts']['users_active_day'], 'url': community['url'].lower()}
+                        with_baseurl.append(tmp_dict)
+                communities_pages -= 1
+            with_baseurl.sort(key=lambda k: k['baseurl'])
+            instances = groupby(with_baseurl, key=lambda k: k['baseurl'])
+            for instance in instances:
+                top_communities = sorted(instance[1], key=lambda k: k['users_active_day'], reverse=True)[:top_only]
+                for community in top_communities:
+                    #print(community['url'].lower() + ' - ' + str(community['users_active_day']) + ' active users per day')
                     community_actors.append(community['url'].lower())
-            communities_pages -= 1
-        community_count = str(len(community_actors))
-        print('got ' + community_count + ' non-empty lemmy communities.')
+            community_count = str(len(community_actors))
+            print('got ' + community_count + ' non-empty Lemmy communities.')            
+        # get all communities if top_only is not specified
+        else:
+            while communities_pages >= 0:
+                communities = requests.get('https://lemmyverse.net/data/community/' + str(communities_pages) + '.json')
+                for community in communities.json():
+                    if community['counts']['posts'] > 0 and not community['baseurl'] in exclude_instances and (include_instances == [] or community['baseurl'] in include_instances):
+                        community_actors.append(community['url'].lower())
+                communities_pages -= 1
+            community_count = str(len(community_actors))
+            print('got ' + community_count + ' non-empty Lemmy communities.')
 
         # get magazines and add to magazine_actor list (lemmyverse api does not show post count, we get them all)
         magazine_actors = []
