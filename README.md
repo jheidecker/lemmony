@@ -16,7 +16,6 @@ Use is not limited to small instances, that's just what I wrote it for.
 ## DISCLAIMER
 
 If you get errors (specifically KeyError,) the server is responding with rate-limit errors as a payload, instead of expected data. Try lowering the rate-limit. (`-r`)
-Error checking for this to be implemented in 0.0.4!
 
 This will cause load and subsequent incoming network activity on your instance and the network overall! A raspberry-pi or your internet may not be able to accommodate updates from all of the lemmyverse's communities!
 
