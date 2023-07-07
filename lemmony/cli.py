@@ -1,5 +1,6 @@
 import requests
 import argparse
+import time
 
 def main():
     # parse arguments
@@ -12,6 +13,7 @@ def main():
     parser.add_argument('-n', '--no-pending', help='skip subscribing to Pending communities', action='store_true')
     parser.add_argument('-s', '--subscribe-only', help='only subscribe to unsubscribed (-n) or unsubscribed/pending communities, do not scrape for and add new communities', action='store_true')
     parser.add_argument('-d', '--discover-only', help='only add new communities to instance list, do not subscribe', action='store_true')
+    parser.add_argument('-r', '--rate-limit', help='if specified, will rate limit requests to LOCAL to this many per second (default: 15)', type=int, default=15)
     args = parser.parse_args()
 
     # define local instance, username, password and include/exclude lists
@@ -41,6 +43,12 @@ def main():
     login_resp = curSession.post('https://'+local_instance+'/api/v3/user/login', data=payload, headers={"Content-Type": "application/json"})
     #print(login_resp.status_code)
     auth_token = login_resp.json()['jwt']
+
+    # calculate sleep from rate-limit
+    if args.rate_limit is not None:
+        rl_sleep = 1 / args.rate_limit
+    else:
+        rl_sleep = 0
 
     def discover():
             
@@ -86,6 +94,7 @@ def main():
         new_results = True
         page = 1
         while new_results:
+            time.sleep(rl_sleep)
             actor_resp = curSession.get('https://'+local_instance+'/api/v3/community/list?type_=All&limit=50&page=' + str(page) + '&auth=' + auth_token, headers={"Content-Type": "application/json"})
             if actor_resp.json()['communities'] != []:
                 for community in actor_resp.json()['communities']:
@@ -101,6 +110,7 @@ def main():
         print('adding new global communities > local instance (this will take a while)...')
         for idx, actor_id in enumerate(all_actors, 1):
             if actor_id not in local_community_actor_id_list:
+                time.sleep(rl_sleep)
                 actor_resp = curSession.get('https://'+local_instance+'/search?q=' + actor_id + '&type=All&listingType=All&page=1&sort=TopAll', headers={"Cookie": "jwt=" + auth_token})
                 print('\r\033[K', end='')
                 print(str(idx) + "/" + all_actor_count + " " + actor_id + ": " + str(actor_resp.status_code), end='\r')
@@ -116,6 +126,7 @@ def main():
         new_results = True
         page = 1
         while new_results:
+            time.sleep(rl_sleep)
             actor_resp = curSession.get('https://'+local_instance+'/api/v3/community/list?type_=All&limit=50&page=' + str(page) + '&auth=' + auth_token, headers={"Content-Type": "application/json"})
             if actor_resp.json()['communities'] != []:
                 for community in actor_resp.json()['communities']:
@@ -141,6 +152,7 @@ def main():
         # subscribe the user to all unsubscribed communities
         print('subscribing ' + username + ' to communities (this will take a while)...')
         for idx, community_id in enumerate(local_community_id_list, 1):
+            time.sleep(rl_sleep)
             sub_resp = curSession.post('https://'+local_instance+'/api/v3/community/follow', data='{"community_id": ' + str(community_id) + ', "follow": true, "auth": "' + auth_token + '"}', headers={"Cookie": "jwt=" + auth_token, "Content-Type": "application/json"})
             print('\r\033[K', end='\r')
             print(str(idx) + "/" + local_community_count + " " + str(community_id) + ": " + str(sub_resp.json()['community_view']['subscribed']), end="\r")

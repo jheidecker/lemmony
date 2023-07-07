@@ -15,6 +15,9 @@ Use is not limited to small instances, that's just what I wrote it for.
 
 ## DISCLAIMER
 
+If you get errors (specifically KeyError,) the server is responding with rate-limit errors as a payload, instead of expected data. Try lowering the rate-limit. (`-r`)
+Error checking for this to be implemented in 0.0.4!
+
 This will cause load and subsequent incoming network activity on your instance and the network overall! A raspberry-pi or your internet may not be able to accommodate updates from all of the lemmyverse's communities!
 
 ## What lemmony does
@@ -56,7 +59,8 @@ Pass these flags to the command for more control:
 
 - `-n` : skip subscribing to communities in the "Pending" state for the user
 - `-s` : subscribe only. skips the discovery and adding of new lemmyverse communtities
-- `-d` :  discover only. skips subscribing to any communities for the user
+- `-d` : discover only. skips subscribing to any communities for the user
+- `-r` : if specified, will rate limit requests to LOCAL to this many per second (default: 15)
 
 ### Build and Run Manually
 
@@ -67,7 +71,7 @@ Requires python3, and pip(3)
 # cd lemmony
 # pip install build
 # python -m build
-# pip install dist/lemmony-*.whl
+# pip install dist/lemmony-[version]-py3-none-any.whl
 ```
 
 This should install lemmony-cli as a command in your path:
