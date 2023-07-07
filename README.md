@@ -67,7 +67,7 @@ Requires python3, and pip(3)
 # cd lemmony
 # pip install build
 # python -m build
-# pip install dist/lemmony-0.0.1-py3-none-any.whl
+# pip install dist/lemmony-*.whl
 ```
 
 This should install lemmony-cli as a command in your path:

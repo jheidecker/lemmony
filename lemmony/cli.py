@@ -154,7 +154,7 @@ def main():
     else:
         discover()
         subscribe()
-    #be done
+    # done
     print('done.')
 
 if __name__ == "__main__":
