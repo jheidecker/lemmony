@@ -40,12 +40,14 @@ This will probably fail if the instance does not have a valid SSL certificate.
 ### docker / podman
 
 ```bash
+# sudo docker pull ghcr.io/jheidecker/lemmony/lemmony
 # sudo docker run ghcr.io/jheidecker/lemmony/lemmony lemmony-cli -l [your-instance] -u [username] -p [password]
 ```
 
 or
 
 ```bash
+# podman pull ghcr.io/jheidecker/lemmony/lemmony
 # podman run ghcr.io/jheidecker/lemmony/lemmony lemmony-cli -l [your-instance] -u [username] -p [password] 
 ```
 
