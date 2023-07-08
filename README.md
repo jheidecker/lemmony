@@ -88,7 +88,7 @@ cli.py: error: the following arguments are required: -l/--local, -u/--username, 
 
 ### Include and exclude instances
 
-By default lemmony tries to subscribe to as many communities as it can based on the global lists provided by [lemmyverse.net](lemmyverse.net) You can include and exclude instances using the optional `-i` and `-e` flags respectively. This way you cal only subscribe to favorites or exclude instances you do not want to subscribe to. The flags cannot be used at the same time. For example:
+By default lemmony tries to subscribe to as many communities as it can based on the global lists provided by [lemmyverse.net](lemmyverse.net) You can include and exclude instances using the optional `-i` and `-e` flags respectively. This way you can only subscribe to favorite instances, or exclude instances you do not want. The flags cannot be used at the same time. For example:
 
 To add communities from all instances except `lemmy.world`:
 

@@ -17,6 +17,7 @@ def main():
     parser.add_argument('-r', '--rate-limit', help='if specified, will rate limit requests to LOCAL to this many per second (default: 15)', type=int, default=15)
     parser.add_argument('-t', '--top-only', help='if specified, only discover top X communities based on active users per day (Lemmy only) (default: get all non-empty communities)', type=int)
     parser.add_argument('-k', '--skip-kbin', help='if specified, will not discover kbin communities (will still subscribe if they are communities on instance)', action='store_true')
+    parser.add_argument('-x', '--unsubscribe-all', help='forgo all other functions and unsubscribe the USER from all communities on instance', action='store_true')
     args = parser.parse_args()
 
     # define local instance, username, password and include/exclude lists
@@ -26,6 +27,7 @@ def main():
     no_pending = args.no_pending
     subscribe_only = args.subscribe_only
     discover_only = args.discover_only
+    unsubscribe_all = args.unsubscribe_all
     skip_kbin = args.skip_kbin
     
     if args.top_only is not None:
@@ -191,7 +193,44 @@ def main():
             time.sleep(rl_sleep)
             sub_resp = curSession.post('https://'+local_instance+'/api/v3/community/follow', data='{"community_id": ' + str(community_id) + ', "follow": true, "auth": "' + auth_token + '"}', headers={"Cookie": "jwt=" + auth_token, "Content-Type": "application/json"})
             print('\r\033[K', end='\r')
-            print(str(idx) + "/" + local_community_count + " " + str(community_id) + ": " + str(sub_resp.json()['community_view']['subscribed']), end="\r")
+            print(str(idx) + "/" + local_community_count + " " + str(community_id), end="\r")
+        print('\r\033[K', end='\r')
+        print('done.')
+
+    def unsubscribe():
+        # fetch a list of communities by id that the user is not already subscribed to
+        print('re-fetching communities ready for un-subscription (this might take a while)...')
+        local_community_id_list = []
+        new_results = True
+        page = 1
+        while new_results:
+            time.sleep(rl_sleep)
+            actor_resp = curSession.get('https://'+local_instance+'/api/v3/community/list?type_=All&limit=50&page=' + str(page) + '&auth=' + auth_token, headers={"Content-Type": "application/json"})
+            if actor_resp.json()['communities'] != []:
+                for community in actor_resp.json()['communities']:
+                    if community['subscribed'] == 'NotSubscribed':
+                        #print("f:subscribed:skipped: " + community['community']['actor_id'])
+                        continue
+                    else:
+                        local_community_id_list.append(community['community']['id'])
+                        #print("f:non-subscribed:added " + community['community']['actor_id'])
+                print(page * 50, end="\r")
+                page += 1
+            else:
+                new_results = False
+        print('done.')
+
+        # store and display total in the list for displaying progress
+        local_community_count = str(len(local_community_id_list))
+        print('found ' + local_community_count + ' communities to un-subscribe from.')
+
+        # unsubscribe the user to all unsubscribed communities
+        print('subscribing ' + username + ' to communities (this will take a while)...')
+        for idx, community_id in enumerate(local_community_id_list, 1):
+            time.sleep(rl_sleep)
+            sub_resp = curSession.post('https://'+local_instance+'/api/v3/community/follow', data='{"community_id": ' + str(community_id) + ', "follow": false, "auth": "' + auth_token + '"}', headers={"Cookie": "jwt=" + auth_token, "Content-Type": "application/json"})
+            print('\r\033[K', end='\r')
+            print(str(idx) + "/" + local_community_count + " " + str(community_id), end="\r")
         print('\r\033[K', end='\r')
         print('done.')
 
@@ -199,6 +238,8 @@ def main():
         discover()
     elif subscribe_only == True:
         subscribe()
+    elif unsubscribe_all == True:
+        unsubscribe()
     else:
         discover()
         subscribe()
