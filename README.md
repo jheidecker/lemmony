@@ -62,7 +62,7 @@ Pass these flags to the command for more control:
 - `-s` : subscribe only. skips the discovery and adding of new lemmyverse communities
 - `-d` : discover only. skips subscribing to any communities for the user
 - `-r [number]` : if specified, will rate limit requests to LOCAL to this many per second (default: 15)
-- `-t [number]` : if specified, only discover top X communities based on active users per day (Lemmy only) (default: get all non-empty communities)
+- `-t [number]` : if specified, only discover top X communities **PER INSTANCE** based on active users per day (Lemmy only) (default: get all non-empty communities per. instance)
 - `-k` : if specified, will not discover kbin communities (will still subscribe if they are communities on instance)
 
 ### Build and Run Manually
