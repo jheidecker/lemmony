@@ -15,7 +15,7 @@ def main():
     parser.add_argument('-s', '--subscribe-only', help='only subscribe to unsubscribed (-n) or unsubscribed/pending communities, do not scrape for and add new communities', action='store_true')
     parser.add_argument('-d', '--discover-only', help='only add new communities to instance list, do not subscribe', action='store_true')
     parser.add_argument('-r', '--rate-limit', help='if specified, will rate limit requests to LOCAL to this many per second (default: 15)', type=int, default=15)
-    parser.add_argument('-t', '--top-only', help='if specified, only discover top X communities based on active users per day (Lemmy only) (default: get all non-empty communities)', type=int)
+    parser.add_argument('-t', '--top-only', help='top X communities based on active users per day (Lemmy only) (default: 10)', type=int, default=10)
     parser.add_argument('-k', '--skip-kbin', help='if specified, will not discover kbin communities (will still subscribe if they are communities on instance)', action='store_true')
     parser.add_argument('-x', '--unsubscribe-all', help='forgo all other functions and unsubscribe the USER from all communities on instance', action='store_true')
     args = parser.parse_args()
@@ -81,7 +81,7 @@ def main():
             while communities_pages >= 0:
                 communities = requests.get('https://lemmyverse.net/data/community/' + str(communities_pages) + '.json')
                 for community in communities.json():
-                    if community['counts']['posts'] > 0 and not community['baseurl'] in exclude_instances and (include_instances == [] or community['baseurl'] in include_instances):
+                    if community['counts']['posts'] > 0 and not community['isSuspicious'] == True and not community['baseurl'] in exclude_instances and (include_instances == [] or community['baseurl'] in include_instances):
                         tmp_dict = {'baseurl': community['baseurl'], 'users_active_day': community['counts']['users_active_day'], 'url': community['url'].lower()}
                         with_baseurl.append(tmp_dict)
                 communities_pages -= 1
@@ -99,7 +99,7 @@ def main():
             while communities_pages >= 0:
                 communities = requests.get('https://lemmyverse.net/data/community/' + str(communities_pages) + '.json')
                 for community in communities.json():
-                    if community['counts']['posts'] > 0 and not community['baseurl'] in exclude_instances and (include_instances == [] or community['baseurl'] in include_instances):
+                    if community['counts']['posts'] > 0 and not community['isSuspicious'] == True and not community['baseurl'] in exclude_instances and (include_instances == [] or community['baseurl'] in include_instances):
                         community_actors.append(community['url'].lower())
                 communities_pages -= 1
             community_count = str(len(community_actors))

@@ -13,7 +13,9 @@ Per: [https://join-lemmy.org/docs/users/01-getting-started.html](https://join-le
 
 Use is not limited to small instances, that's just what I wrote it for.
 
-## DISCLAIMER
+## BIG DISCLAIMER
+
+IF YOU DON'T UNDERSTAND WHAT THIS TOOL DOES, PLEASE CONSIDER CAREFULLY THE IMPLICATIONS OF RUNNING IT.
 
 If you get errors (specifically KeyError,) the server is responding with rate-limit errors as a payload, instead of expected data. Try lowering the rate-limit. (`-r`)
 
@@ -21,7 +23,7 @@ This will cause load and subsequent incoming network activity on your instance a
 
 ## What lemmony does
 
-1. Get a list of all communities/magazines in the Lemmyverse that have > 0 posts
+1. Get a list of communities/magazines in the Lemmyverse from [lemmyverse.net](lemmyverse.net) that have > 0 posts, are not listed as suspicious, and meet the top and include/exclude conditions
 2. Login to local instance as a specified user
 3. "Makes known" (see above) any communities or magazines fetched above that have never been known on your local instance
 4. Subscribes a user (follows) to all known communities on your local instance that are shown as "Unsubscribed" or, re-subscribes if the status is "Pending."
@@ -62,7 +64,7 @@ Pass these flags to the command for more control:
 - `-s` : subscribe only. skips the discovery and adding of new lemmyverse communities
 - `-d` : discover only. skips subscribing to any communities for the user
 - `-r [number]` : if specified, will rate limit requests to LOCAL to this many per second (default: 15)
-- `-t [number]` : if specified, only discover top X communities **PER INSTANCE** based on active users per day (Lemmy only) (default: get all non-empty communities per. instance)
+- `-t [number]` : if specified, only discover top X communities **PER INSTANCE** based on active users per day (Lemmy only) (default: 10)
 - `-k` : if specified, will not discover kbin communities (will still subscribe if they are communities on instance)
 
 ### Build and Run Manually
