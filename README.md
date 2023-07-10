@@ -34,7 +34,7 @@ Lemmy's API versioning is... not ideally stable. Check the release notes for the
 
 ## Usage
 
-The script requires an account to login to the instance. It is recommended you create a "bot" user that is not used for interactive logins.
+The script requires an account to login to the instance. It is recommended you create a "bot" user, mark it as a bot, and use an obvious avatar. One is provided in the repository here for your convenience.
 
 This will probably fail if the instance does not have a valid SSL certificate.
 
@@ -60,12 +60,13 @@ or
 
 Pass these flags to the command for more control:
 
-- `-n` : skip subscribing to communities in the "Pending" state for the user
-- `-s` : subscribe only. skips the discovery and adding of new lemmyverse communities
-- `-d` : discover only. skips subscribing to any communities for the user
-- `-r [number]` : if specified, will rate limit requests to LOCAL to this many per second (default: 15)
-- `-t [number]` : if specified, only discover top X communities **PER INSTANCE** based on active users per day (Lemmy only) (default: 10)
-- `-k` : if specified, will not discover kbin communities (will still subscribe if they are communities on instance)
+- `-n` : skip subscribing to communities in the "Pending" state
+- `-s` : subscribe only. skips the discovery and adding of new communities
+- `-d` : discover only. skips subscribing to any communities
+- `-r [number]` : will rate limit requests to LOCAL to X per second (default: 15)
+- `-t [number]` : only discover top X communities **PER INSTANCE** based on active users per day (default: 10) (Lemmy only, does not apply to kbin!)
+- `-k` : do not include kbin communities in discovery (will still subscribe if they meet conditions to subscribe)
+- `-x` : forgo all other functions and unsubscribe the USER from all communities
 
 ### Build and Run Manually
 
@@ -83,9 +84,9 @@ This should install lemmony-cli as a command in your path:
 
 ```bash
 # lemmony-cli
-usage: lemmony-cli [-h] [-i INCLUDE [INCLUDE ...]] [-e EXCLUDE [EXCLUDE ...]] -l LOCAL -u USERNAME -p PASSWORD [-n] [-s] [-d] [-r RATE_LIMIT]
-              [-t TOP_ONLY]
-cli.py: error: the following arguments are required: -l/--local, -u/--username, -p/--password
+usage: lemmony-cli [-h] [-i INCLUDE [INCLUDE ...]] [-e EXCLUDE [EXCLUDE ...]] -l LOCAL -u USERNAME -p PASSWORD [-n] [-s] [-d] [-r RATE_LIMIT] [-t TOP_ONLY] [-k] [-x]
+
+lemmony-cli: error: the following arguments are required: -l/--local, -u/--username, -p/--password
 ```
 
 ### Include and exclude instances
