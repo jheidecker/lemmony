@@ -11,6 +11,7 @@ def main():
     parser.add_argument('-l', '--local', help='local instance to subscribe to i.e. lemmy.co.uk', required=True)
     parser.add_argument('-u', '--username', help='username to subscribe with i.e. fed_sub_bot', required=True)
     parser.add_argument('-p', '--password', help='password for user', required=True)
+    parser.add_argument('-2', '--two-factor', help='two factor auth code for user', required=False)
     parser.add_argument('-n', '--no-pending', help='skip subscribing to Pending communities', action='store_true')
     parser.add_argument('-s', '--subscribe-only', help='only subscribe to unsubscribed (-n) or unsubscribed/pending communities, do not scrape for and add new communities', action='store_true')
     parser.add_argument('-d', '--discover-only', help='only add new communities to instance list, do not subscribe', action='store_true')
@@ -29,6 +30,7 @@ def main():
     discover_only = args.discover_only
     unsubscribe_all = args.unsubscribe_all
     skip_kbin = args.skip_kbin
+    mfa_code = args.two_factor
 
     #enable testing
     debug = False
@@ -42,10 +44,12 @@ def main():
     curSession = requests.Session()
     
     # login and get jwt token
-    payload='{"username_or_email": "'+username+'","password": "'+password+'"}'
+    if mfa_code is None:
+        payload='{"username_or_email": "'+username+'","password": "'+password+'"}'
+    else:
+        payload='{"username_or_email": "'+username+'","password": "'+password+'","totp_2fa_token": "'+mfa_code+'"}'
     print('logging in to ' + local_instance + ' as ' + username + '...')
     login_resp = curSession.post('https://'+local_instance+'/api/v3/user/login', data=payload, headers={"Content-Type": "application/json"})
-    #print(login_resp.status_code)
     auth_token = login_resp.json()['jwt']
 
     # calculate sleep from rate-limit
