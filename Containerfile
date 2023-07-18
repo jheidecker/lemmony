@@ -10,6 +10,6 @@ WORKDIR /app
 RUN pip3 install build
 COPY . .
 RUN python3 -m build
-RUN pip3 install dist/lemmony-0.0.5-py3-none-any.whl
+RUN pip3 install dist/lemmony-0.0.6-py3-none-any.whl
 
 CMD ["lemmony-cli"]

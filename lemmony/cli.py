@@ -29,21 +29,14 @@ def main():
     discover_only = args.discover_only
     unsubscribe_all = args.unsubscribe_all
     skip_kbin = args.skip_kbin
+
+    #enable testing
+    debug = False
     
     if args.top_only is not None:
         top_only = args.top_only
     else:
         top_only = 0
-
-    if args.include is not None:
-        include_instances = args.include
-    else:
-        include_instances = []
-
-    if args.exclude is not None:
-        exclude_instances = args.exclude
-    else:
-        exclude_instances = []
 
     # create new session object for local instance
     curSession = requests.Session()
@@ -176,7 +169,7 @@ def main():
                         continue
                     else:
                         local_community_id_list.append(community['community']['id'])
-                        #print("f:non-subscribed:added " + community['community']['actor_id'])
+                        print("f:added " + community['community']['actor_id'])
                 print(page * 50, end="\r")
                 page += 1
             else:
@@ -234,12 +227,44 @@ def main():
         print('\r\033[K', end='\r')
         print('done.')
 
+    def getlocalfederation():
+        print('fetching local federation allow/block lists...')
+        local_federation_list = []
+        local_federation_list = curSession.get('https://'+local_instance+'/api/v3/federated_instances')
+        included_instances = []
+        excluded_instances = []
+        for instance in local_federation_list.json()['federated_instances']['allowed']:
+            included_instances.append(instance['domain'])
+        for instance in local_federation_list.json()['federated_instances']['blocked']:
+            excluded_instances.append(instance['domain'])
+        return included_instances, excluded_instances
+
+    # get allowed and disallowed instances from local instance and use these if -i and -e are not specified
+    included_instances, excluded_instances = getlocalfederation()
+
+    if args.include is not None:
+        include_instances = args.include
+        exclude_instances = []
+        print('including: ' + str(include_instances))
+    elif args.exclude is not None:
+        exclude_instances = args.exclude
+        include_instances = []
+        print('excluding: ' + str(exclude_instances))
+    else:
+        include_instances = included_instances
+        print('including: ' + str(include_instances))
+        exclude_instances = excluded_instances
+        print('excluding: ' + str(exclude_instances))
+
+    #main logic
     if discover_only == True:
         discover()
     elif subscribe_only == True:
         subscribe()
     elif unsubscribe_all == True:
         unsubscribe()
+    elif debug == True:
+        getlocalfederation()
     else:
         discover()
         subscribe()
