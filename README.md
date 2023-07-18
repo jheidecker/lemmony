@@ -13,6 +13,11 @@ Per: [https://join-lemmy.org/docs/users/01-getting-started.html](https://join-le
 
 Use is not limited to small instances, that's just what I wrote it for.
 
+Here are some other similar projects:
+ 
+ - [Lemmy Subscriber Bot (LSB)](https://github.com/lflare/lemmy-subscriber-bot)
+ - [Lemmy Community Seeder (LCS)](https://github.com/Fmstrat/lcs)
+
 ## BIG DISCLAIMER
 
 IF YOU DON'T UNDERSTAND WHAT THIS TOOL DOES, PLEASE CONSIDER CAREFULLY THE IMPLICATIONS OF RUNNING IT.
